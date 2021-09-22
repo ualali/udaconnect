@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: udaconnect-zookeeper
+  name: udaconnect-zookeeper
+spec:
+  ports:
+    - name: client
+      port: 2181
+      protocol: TCP
+    - name: follower
+      port: 2888
+      protocol: TCP
+    - name: leader
+      port: 3888
+      protocol: TCP
+  selector:
+    service: udaconnect-zookeeper
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: udaconnect-kafka
+  name: udaconnect-kafka
+spec:
+  ports:
+    - name: "9092"
+      port: 9092
+      protocol: TCP
+  selector:
+    service: udaconnect-kafka
+    id: "0"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: udaconnect-zookeeper
+  name: udaconnect-zookeeper
+spec:
+  selector:
+    matchLabels:
+      app: udaconnect-zookeeper
+  template:
+    metadata:
+      labels:
+        app: udaconnect-zookeeper
+    spec:
+      containers:
+        - image: digitalwonderland/zookeeper
+          name: udaconnect-zookeeper
+          ports:
+            - containerPort: 2181
+          env:
+            - name: ZOOKEPER_ID
+              value: "1"
+            - name: ZOOKEPER_SERVER_1
+              value: udaconnect-zookeeper
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: udaconnect-kafka
+  name: udaconnect-kafka
+spec:
+  selector:
+    matchLabels:
+      app: udaconnect-kafka
+  template:
+    metadata:
+      labels:
+        app: udaconnect-kafka
+        id: "0"
+    spec:
+      containers:
+        - image: wurstmeister/kafka
+          name: udaconnect-kafka
+          ports:
+            - containerPort: 9092
+          env:
+            - name: KAFKA_ADVERTISED_PORT
+              value: "9092"
+            - name: KAFKA_ADVERTISED_HOST_NAME
+              value: udaconnect-kafka
+            - name: KAFKA_ZOOKEEPER_CONNECT
+              value: udaconnect-zookeeper:2181
+            - name: KAFKA_BROKER_ID
+              value: "0"
