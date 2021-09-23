@@ -44,7 +44,7 @@ def consume():
         print("Location received: {}".format(message))
 
         decoded_message = message.value.decode("utf-8")
-        location = json.loads(message)
+        location = json.loads(decoded_message)
 
         save_location(location)
 
