@@ -76,12 +76,22 @@ Type `exit` to exit the virtual OS and you will find yourself back in your compu
 Afterwards, you can test that `kubectl` works by running a command like `kubectl describe services`. It should not return any errors.
 
 ### Steps
-1. `kubectl apply -f deployment/db-configmap.yaml` - Set up environment variables for the pods
-2. `kubectl apply -f deployment/db-secret.yaml` - Set up secrets for the pods
-3. `kubectl apply -f deployment/postgres.yaml` - Set up a Postgres database running PostGIS
-4. `kubectl apply -f deployment/udaconnect-api.yaml` - Set up the service and deployment for the API
-5. `kubectl apply -f deployment/udaconnect-app.yaml` - Set up the service and deployment for the web app
-6. `sh scripts/run_db_command.sh <POD_NAME>` - Seed your database against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`)
+1. Create a Kafka cluster with [strimzi](https://strimzi.io/).
+    ```bash
+    kubectl apply -f deployment/udaconnect-kafka.yaml
+    kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
+    kubectl apply -f https://strimzi.io/examples/latest/kafka/kafka-persistent-single.yaml -n kafka
+    kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n kafka
+    ```
+2. `kubectl apply -f deployment/db-configmap.yaml` - Set up environment variables for the pods
+3. `kubectl apply -f deployment/db-secret.yaml` - Set up secrets for the pods
+4. `kubectl apply -f deployment/postgres.yaml` - Set up a Postgres database running PostGIS
+5. kubectl apply -f deployment/udaconnect-connection.yaml - Set up the Persons Connection service
+6. kubectl apply -f deployment/udaconnect-persons.yaml - Set up the Persons service
+7. kubectl apply -f deployment/udaconnect-frontend.yaml - Set up the web app
+8. kubectl apply -f deployment/udaconnect-location-consumer.yaml - Set up the Location data consumer service
+9. kubectl apply -f deployment/udaconnect-location-producer.yaml - Set up the Location data producer service
+10. `sh scripts/run_db_command.sh <POD_NAME>` - Seed your database against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`)
 
 Manually applying each of the individual `yaml` files is cumbersome but going through each step provides some context on the content of the starter project. In practice, we would have reduced the number of steps by running the command against a directory to apply of the contents: `kubectl apply -f deployment/`.
 
@@ -89,13 +99,15 @@ Note: The first time you run this project, you will need to seed the database wi
 
 ### Verifying it Works
 Once the project is up and running, you should be able to see 3 deployments and 3 services in Kubernetes:
-`kubectl get pods` and `kubectl get services` - should both return `udaconnect-app`, `udaconnect-api`, and `postgres`
-
+`kubectl get pods --all-namespaces` and `kubectl get services --all-namespaces` - should both return all services and deployments
 
 These pages should also load on your web browser:
-* `http://localhost:30001/` - OpenAPI Documentation
-* `http://localhost:30001/api/` - Base path for API
+* `http://localhost:30002/` - OpenAPI Documentation for Persons API
+* `http://localhost:30002/api/` - Base path for Persons API
+* `http://localhost:30005/` - OpenAPI Documentation for Connection API
+* `http://localhost:30005/api/` - Base path for Connection API
 * `http://localhost:30000/` - Frontend ReactJS Application
+* `http://localhost:30003/` - Base path for the Location gRPC API
 
 #### Deployment Note
 You may notice the odd port numbers being served to `localhost`. [By default, Kubernetes services are only exposed to one another in an internal network](https://kubernetes.io/docs/concepts/services-networking/service/). This means that `udaconnect-app` and `udaconnect-api` can talk to one another. For us to connect to the cluster as an "outsider", we need to a way to expose these services to `localhost`.
