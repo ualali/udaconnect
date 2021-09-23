@@ -1,0 +1,34 @@
+# gRCP Documentation
+
+## Message format and service
+
+```
+syntax = "proto3";
+
+message LocationMessage {
+    int32 person_id = 1;
+    float longitude = 2;
+    float latitude = 3;
+}
+
+service LocationService {
+    rpc Create (LocationMessage) returns (LocationMessage);
+}
+```
+
+## Sample Request
+
+1. Run the project (README.md file).
+2. Create a Python environment:
+```
+$ python -m venv env
+$ source env/bin/activate
+```
+3. Install `requirements`:
+```
+pip install -r modules/location-producer/requirements.txt
+```
+4. Run `client.py`:
+```
+python modules/location-producer/app/udaconnect/client.py
+```

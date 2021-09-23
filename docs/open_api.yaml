@@ -1,0 +1,80 @@
+openapi: 3.0.0
+info:
+  description: Manage persons and connections.
+  version: "1.0.0"
+  title: UdaConnect API
+paths:
+  "/api/persons":
+    get:
+      summary: Retrieve all persons
+      operationId: get_persons_resource
+      description: Retrieve all persons
+      responses:
+        "200":
+          description: Success
+          content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Person"
+        "404":
+          description: Requested person ID was not found
+    post:
+      summary: Creates a person
+      operationId: post_persons_resource
+      description: Adds an person
+      responses:
+        "200":
+          description: Success
+        "400":
+          description: Invalid input, object invalid
+        "409":
+          description: An existing person already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Person"
+        description: Person to add
+  "/api/persons/{person_id}":
+    get:
+      summary: Retrieve all persons
+      operationId: get_persons_resource
+      description: Success
+      parameters:
+        - in: path
+          name: itemId
+          schema:
+            type: string
+          required: true
+          description: ID of the item to get
+      responses:
+        "200":
+          description: Successfully retrieved an item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+        "404":
+          description: Requested item ID was not found
+components:
+  schemas:
+    Person:
+      type: object
+      required:
+        - id
+        - first_name
+        - last_name
+        - company_name
+      properties:
+        id:
+          type: int
+          example: 1
+        name:
+          type: string
+          example: "Frank"
+        brandName:
+          type: string
+          example: "Shader"
+        weight:
+          type: string
+          example: "USDA"

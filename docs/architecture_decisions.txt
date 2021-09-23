@@ -1,0 +1,24 @@
+Migration Strategy
+
+Using the Strangler Pattern, we've detected that the parts of the applications that can be refactored are:
+
+1. Persons Route along with the Persons Service because it is much more decoupled from the rest of the application. Changes are more isolated and not cross-service. They are less likely to impact other parts of the system.
+2. Location Route along with the Location Service because it is the second part of the app that is more decoupled from the rest of the application.
+3. Connection Route along with the Connection Service because it depends on the Location Service.
+4. Front end service because it is a customer-facing service.
+
+
+
+Justify decisions
+
+REST Rationale
+
+The Persons Service and Connection Service don't have special requirements that justify a change in the current message passing technique, so it is a wise decision to keep it as it is.
+
+gRPC Rationale
+
+Location data is expected to be received continuously, so we need a message passing technique that provides speed and structure to the client app (mobile and/or web).
+
+Message Queue Rationale
+
+Message queues are perfect for handling massive ammount of data, and that is the business requirement for this project; so combining gRPC with Kafka for this task is the way to go.
