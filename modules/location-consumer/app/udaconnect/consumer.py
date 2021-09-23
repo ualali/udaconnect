@@ -12,7 +12,10 @@ DB_PORT = os.environ["DB_PORT"]
 DB_NAME = os.environ["DB_NAME"]
 
 
-consumer = KafkaConsumer(topics="Locations", bootstrap_servers="udaconnect-kafka:9092")
+consumer = KafkaConsumer(
+    "Locations",
+    bootstrap_servers="my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092",
+)
 
 
 def save_location(location):
@@ -48,3 +51,4 @@ def consume():
 
 if __name__ == "__main__":
     logging.basicConfig()
+    consume()

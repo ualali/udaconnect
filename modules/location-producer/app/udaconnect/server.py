@@ -8,7 +8,7 @@ import location_pb2
 import location_pb2_grpc
 
 
-producer = KafkaProducer(bootstrap_servers="udaconnect-kafka:9092")
+producer = KafkaProducer(bootstrap_servers="my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092")
 
 
 class LocationServicer(location_pb2_grpc.LocationServiceServicer):
