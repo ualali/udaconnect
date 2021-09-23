@@ -86,11 +86,11 @@ Afterwards, you can test that `kubectl` works by running a command like `kubectl
 2. `kubectl apply -f deployment/db-configmap.yaml` - Set up environment variables for the pods
 3. `kubectl apply -f deployment/db-secret.yaml` - Set up secrets for the pods
 4. `kubectl apply -f deployment/postgres.yaml` - Set up a Postgres database running PostGIS
-5. kubectl apply -f deployment/udaconnect-connection.yaml - Set up the Persons Connection service
-6. kubectl apply -f deployment/udaconnect-persons.yaml - Set up the Persons service
-7. kubectl apply -f deployment/udaconnect-frontend.yaml - Set up the web app
-8. kubectl apply -f deployment/udaconnect-location-consumer.yaml - Set up the Location data consumer service
-9. kubectl apply -f deployment/udaconnect-location-producer.yaml - Set up the Location data producer service
+5. `kubectl apply -f deployment/udaconnect-connection.yaml` - Set up the Persons Connection service
+6. `kubectl apply -f deployment/udaconnect-persons.yaml` - Set up the Persons service
+7. `kubectl apply -f deployment/udaconnect-frontend.yaml` - Set up the web app
+8. `kubectl apply -f deployment/udaconnect-location-consumer.yaml` - Set up the Location data consumer service
+9. `kubectl apply -f deployment/udaconnect-location-producer.yaml` - Set up the Location data producer service
 10. `sh scripts/run_db_command.sh <POD_NAME>` - Seed your database against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`)
 
 Manually applying each of the individual `yaml` files is cumbersome but going through each step provides some context on the content of the starter project. In practice, we would have reduced the number of steps by running the command against a directory to apply of the contents: `kubectl apply -f deployment/`.
